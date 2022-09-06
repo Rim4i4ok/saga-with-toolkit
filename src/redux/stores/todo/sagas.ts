@@ -30,4 +30,4 @@ function* todoSaga() {
   yield all([takeLatest(FETCH_TODO_REQUEST, fetchTodoSaga)]);
 }
 
-export default todoSaga;
+export default [todoSaga];
