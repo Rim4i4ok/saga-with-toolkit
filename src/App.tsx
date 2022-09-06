@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTodoRequest } from "./redux/stores/todo/actions";
+import { getUsersApi } from "./redux/stores/users/actions";
+import {
+  getPendingSelector,
+  getTodosSelector,
+  getErrorSelector,
+} from "./redux/stores/todo/selectors";
+import { getUsersSelector } from "redux/stores/users/selectors";
 
-function App() {
+const App = () => {
+  const dispatch = useDispatch();
+  const pending = useSelector(getPendingSelector);
+  const todos = useSelector(getTodosSelector);
+  const error = useSelector(getErrorSelector);
+  const users = useSelector(getUsersSelector);
+
+  useEffect(() => {
+    dispatch(fetchTodoRequest());
+    dispatch(getUsersApi());
+  }, [dispatch]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: "15px" }}>
+      <div>Users:</div>
+      <div>
+        {users.map((user, index) => (
+          <div key={index} style={{ border: "solid 1px red" }}>
+            <p>{user.gender}</p>
+            <p>{user.name.first}</p>
+            <p>{user.email}</p>
+          </div>
+        ))}
+      </div>
+      <div>TO DO:</div>
+      {pending ? (
+        <div>Loading...</div>
+      ) : error ? (
+        <div>Error</div>
+      ) : (
+        todos.map((todo, index) => (
+          <div style={{ marginBottom: "10px" }} key={todo.id}>
+            {++index}. {todo.title}
+          </div>
+        ))
+      )}
     </div>
   );
-}
+};
 
 export default App;
